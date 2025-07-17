@@ -1,0 +1,8 @@
+FROM python:3.10-slim
+WORKDIR /app
+COPY pyproject.toml poetry.lock ./
+# RUN curl -sSL https://install.python-poetry.org | python3
+# RUN ~/.local/bin/poetry install --no-root
+RUN pip install poetry && poetry install --no-root
+COPY app/ ./app/
+CMD ["poetry", "run", "streamlit", "run", "app/web/streamlit_app.py", "--server.port=8502", "--server.address=0.0.0.0"]

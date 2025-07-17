@@ -23,3 +23,7 @@ package-mode = false
 requests = "^2.32.3"
 uuid = "^1.30"
 
+[tool.poetry.dependencies]
+python = "^3.9"
+transformers = "^4.0.0"
+
