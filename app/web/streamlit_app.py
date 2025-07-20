@@ -7,7 +7,7 @@ from sklearn.metrics import log_loss
 
 from app.models import GetMessageRequestModel
 
-default_echo_bot_url = "http://localhost:6872"
+default_echo_bot_url = "http://backend:6872"
 st.set_page_config(initial_sidebar_state="collapsed")
 
 st.markdown("# Echo bot with Classification 🚀")

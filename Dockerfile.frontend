@@ -1,8 +1,43 @@
 FROM python:3.10-slim
+
+# Set working directory
 WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    build-essential \
+    gcc \
+    libffi-dev \
+    libpq-dev \
+    libssl-dev \
+    git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Poetry
+ENV POETRY_HOME="/opt/poetry"
+ENV PATH="$POETRY_HOME/bin:$PATH"
+ENV PYTHONPATH=/app
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+# Enable virtualenvs to be inside the project
+ENV POETRY_VIRTUALENVS_IN_PROJECT=true
+
+RUN echo $PATH
+RUN /opt/poetry/bin/poetry --version
+
+# Copy dependency files first to use Docker cache
 COPY pyproject.toml poetry.lock ./
-# RUN curl -sSL https://install.python-poetry.org | python3
-# RUN ~/.local/bin/poetry install --no-root
-RUN pip install poetry && poetry install --no-root
+
+# Install Python dependencies
+RUN poetry install --no-root --no-interaction
+
+# Copy the rest of the app
 COPY app/ ./app/
+
+# Set default echo bot URL
+ENV DEFAULT_ECHO_BOT_URL="http://backend:6872"
+
+# Default command: launch Streamlit
 CMD ["poetry", "run", "streamlit", "run", "app/web/streamlit_app.py", "--server.port=8502", "--server.address=0.0.0.0"]

@@ -17,7 +17,7 @@ from app.models import GetMessageRequestModel, GetMessageResponseModel, Incoming
 
 app = FastAPI()
 
-llm_url = "http://localhost:8080/completion"
+llm_url = "http://llama-server:8080/completion"
 
 # Separate histories for different purposes
 chat_history = defaultdict(list)  # For OpenAI chat (dicts with role/content)

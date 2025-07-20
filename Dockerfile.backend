@@ -1,6 +1,39 @@
 FROM python:3.10-slim
+
+# Set the working directory
 WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    build-essential \
+    gcc \
+    libffi-dev \
+    libpq-dev \
+    libssl-dev \
+    git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Poetry
+ENV POETRY_HOME="/opt/poetry"
+ENV PATH="$POETRY_HOME/bin:$PATH"
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+RUN echo $PATH
+RUN /opt/poetry/bin/poetry --version
+
+# Enable virtualenvs to be inside project
+ENV POETRY_VIRTUALENVS_IN_PROJECT=true
+
+# Copy pyproject and poetry.lock first for caching
 COPY pyproject.toml poetry.lock ./
-RUN pip install poetry && poetry install --no-root
+
+# Install dependencies (show full errors if it fails)
+RUN poetry install --no-root --no-interaction
+
+# Copy application code
 COPY app/ ./app/
-CMD ["poetry", "run", "fastapi", "dev", "app/api/main.py", "--host", "0.0.0.0", "--port", "6872"]
+
+# Run the app
+CMD ["poetry", "run", "uvicorn", "app.api.main:app", "--host", "0.0.0.0", "--port", "6872"]

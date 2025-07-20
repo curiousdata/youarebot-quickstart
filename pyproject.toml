@@ -8,6 +8,11 @@ dependencies = [
     "fastapi[standard] (>=0.115.11,<0.116.0)",
     "pydantic (>=2.10.6,<3.0.0)",
     "streamlit (==1.43.1)",
+    "transformers (>=4.53.2,<5.0.0)",
+    "openai (>=1.97.0,<2.0.0)",
+    "matplotlib (>=3.10.3,<4.0.0)",
+    "scikit-learn (>=1.7.1,<2.0.0)",
+    "torch (>=2.7.1,<3.0.0)"
 ]
 
 
@@ -23,7 +28,5 @@ package-mode = false
 requests = "^2.32.3"
 uuid = "^1.30"
 
-[tool.poetry.dependencies]
-python = "^3.9"
-transformers = "^4.0.0"
+
 
