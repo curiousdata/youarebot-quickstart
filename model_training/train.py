@@ -302,7 +302,7 @@ def main():
         # Demonstrate loading and using the saved model
         print("\nTesting model loading and inference:")
         # copy to classifier model
-        shutil.copy(model_dir, os.path.join('../', 'api', 'services', 'classifier', 'model'))
+        shutil.copytree(model_dir, os.path.join('../', 'api', 'services', 'classifier', 'model'), dirs_exist_ok=True)
         test_model_loading(model_path, tokenizer_path)
 
 
