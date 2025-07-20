@@ -151,7 +151,7 @@ def test_model_loading(model_path, tokenizer_path):
         lora_alpha=8,
         lora_dropout=0.2,
         bias="none",
-        target_modules=["query", "value"]
+        target_modules=["q_lin", "v_lin"]
     ))
     peft_model.load_state_dict(torch.load(model_path))
     peft_model.eval()
@@ -196,7 +196,7 @@ def main():
         lora_alpha=8,
         lora_dropout=0.2,
         bias="none",
-        target_modules=["query", "value"]
+        target_modules=["q_lin", "v_lin"]
     )
 
     peft_model = get_peft_model(model, peft_config)
