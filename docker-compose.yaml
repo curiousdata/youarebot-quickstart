@@ -34,3 +34,42 @@ services:
     depends_on:
       - backend
     command: poetry run streamlit run app/web/streamlit_app.py --server.port=8502 --server.address=0.0.0.0
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    container_name: mlflow
+    ports:
+      - "5001:5000"
+    environment:
+      - MLFLOW_TRACKING_URI=http://0.0.0.0:5001
+      - MLFLOW_BACKEND_STORE_URI=sqlite:///mlflow.db
+      - MLFLOW_DEFAULT_ARTIFACT_ROOT=/mlruns
+    volumes:
+      - ./mlflow.db:/mlflow.db
+      - ./mlruns:/mlruns
+    command: mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root /mlruns --host 0.0.0.0 --port 5000
+
+  classifier:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: classifier
+    ports:
+      - "8000:8000"
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    depends_on:
+      - mlflow
+    command: poetry run uvicorn app.api.classifier:app --host 0.0.0.0 --port 8000
+
+  orchestrator:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: orchestrator
+    ports:
+      - "9000:9000"
+    depends_on:
+      - classifier
+      - llama-server
+    command: poetry run uvicorn app.api.orchestrator:app --host 0.0.0.0 --port 9000
