@@ -19,7 +19,7 @@ logging.basicConfig(
     ]
 )
 def read_compose():
-    files_possible_name = ["compose.yml", "docker-compose.yml"]
+    files_possible_name = ["compose.yml", "docker-compose.yml", "docker-compose.yaml", "compose.yaml"]
     for file_name in files_possible_name:
         if os.path.exists(file_name):
             with open(file_name, "r") as f:
@@ -240,15 +240,11 @@ class Infra:
     
     def __init__(self, yamlString: str):
         self.data = yaml.safe_load(yamlString)
-        self.organization = self.data.get('fly_organization')
-        self.region = self.data.get('fly_region')
-        if self.region == None:
-            self.region = "lhr"
-        if self.organization == None:
-            self.organization = "personal"
-        self.preffix = self.data.get('fly_preffix_app')
+        self.organization = self.data.get('fly_organization', "personal")
+        self.region = self.data.get('fly_region', "lhr")
+        self.preffix = self.data.get('fly_preffix_app', "")  # Default to an empty string if not provided
         logger.info(f"Docker Compose file loaded")
-        logger.info(f"Preffix: {self.preffix}")
+        logger.info(f"Prefix: {self.preffix}")
         for service in self.data.get('services'):
             self.register_service(service)
     def fly_check_cli_check(self):
